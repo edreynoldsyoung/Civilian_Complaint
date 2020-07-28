@@ -1,0 +1,187 @@
+---
+title: "New York Civilian Complaint"
+author: "Ed Young"
+date:  '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  html_document:
+    css: ~/repos/styles.css
+    highlight: null
+    theme: null
+  df_print: kable
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+     echo = FALSE,
+     warning = FALSE,
+     message = FALSE,
+     cache = FALSE
+)
+
+library(here)
+source(here("R", "load_packages.R"))
+
+## Check if volatile files do not exist, or if they do, they are 2 or more days old
+## In either case download the latest version of the volatile files.
+
+if(file.exists(here("data", "allegations_202007271729.csv"))) {
+     allegations <- read.csv(here("data", "allegations_202007271729.csv"))
+} 
+
+## Munge data
+if(!file.exists(here("data", "munge_allegations.csv"))) {
+  source(here("R", "munge_merge.R"))
+}
+
+##  Load functions
+if(file.exists(here("R", "function.R"))) {
+     source(here("R", "function.R"))
+}
+
+
+
+###########################################################
+# Barrier-free color palette
+# Source: Okabe & Ito (2008): Color Universal Design (CUD):
+#         Fig. 16 of <https://jfly.uni-koeln.de/color/>:
+
+# (a) Vector of colors (as RGB values):
+o_i_colors <- c(
+     rgb(0,   0,   0, maxColorValue = 255),
+     # black
+     rgb(230, 159,   0, maxColorValue = 255),
+     # orange
+     rgb(86, 180, 233, maxColorValue = 255),
+     # skyblue
+     rgb(0, 158, 115, maxColorValue = 255),
+     # green
+     rgb(240, 228,  66, maxColorValue = 255),
+     # yellow
+     rgb(0, 114, 178, maxColorValue = 255),
+     # blue
+     rgb(213,  94,   0, maxColorValue = 255),
+     # vermillion
+     rgb(204, 121, 167, maxColorValue = 255)   # purple
+)
+
+# (b) Vector of color names:
+o_i_names <-
+     c("black",
+       "orange",
+       "skyblue",
+       "green",
+       "yellow",
+       "blue",
+       "vermillion",
+       "purple")
+
+names(o_i_colors) <- o_i_names
+
+###########################################################
+# Themes
+
+plot_theme <- theme(
+  plot.background = element_rect(fill = "linen"),
+  plot.title = element_text(face="bold", size=rel(1.5), hjust=0),
+  plot.subtitle = element_text(),
+  panel.background = element_rect(fill = "linen"),
+  axis.line = element_line(color = "black"),
+  legend.background = element_rect(fill = "linen")
+)
+
+double_axis_theme <-   theme(
+    plot.background = element_rect(fill = "linen"),
+    plot.title = element_text(face="bold", 
+      size=rel(1.5), 
+      hjust=0
+      ),
+    plot.subtitle = element_text(color = "tomato"), 
+    panel.background = element_rect(fill = "linen"),  
+    axis.title.y.left = element_text(color = "blue"),
+    axis.title.y.right = element_text(color = "tomato"),
+    axis.text.y.right = element_text(color = "tomato"),
+    axis.line.x = element_line(color = "black"),
+    axis.line.y.left = element_line(color = "black"),
+    axis.line.y.right = element_line(color = "tomato")
+  ) 
+
+facet_theme <- theme(
+          plot.background = element_rect(fill = "linen"),
+          plot.title = element_text(face="bold", size=rel(1.5), hjust=0),
+          plot.subtitle = element_text(),
+          panel.background = element_rect(fill = "linen"),
+          panel.border = element_rect(
+            colour = "black",
+            fill = NA,
+            size = 1
+            ),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          strip.background = element_rect(fill = "linen"),
+          strip.text = element_text(color = "black"),
+          legend.position = "bottom"
+     )
+```
+
+# Histograms
+
+```{r histograms}
+ggplot(
+  data = shootingData,
+  aes(sex)
+  ) +
+geom_bar(color = "white") +
+ggtitle("Bar plot of sex") +
+theme(plot.title = element_text(size = 8))
+  
+ggplot(
+  data = shootings2,
+  aes(race)
+  ) +
+geom_bar(color = "white") +
+ggtitle("Bar plot of race") +
+theme(plot.title = element_text(size = 8))
+
+ggplot(
+  data = shootings2,
+  aes(armed)
+  ) +
+geom_bar(color = "white") +
+ggtitle("Bar plot of armed") +
+theme(plot.title = element_text(size = 8))
+
+ggplot(
+  data = shootings2,
+  aes(mental)
+  ) +
+geom_bar(color = "white") +
+ggtitle("Bar plot of mental") +
+theme(plot.title = element_text(size = 8))
+
+ggplot(
+  data = shootings2,
+  aes(suicidal)
+  ) +
+geom_bar(color = "white") +
+ggtitle("Bar plot of suicidal") +
+theme(plot.title = element_text(size = 8))
+
+ggplot(
+  data = shootings2,
+  aes(attack)
+  ) +
+geom_bar(color = "white") +
+ggtitle("Bar plot of attack") +
+theme(plot.title = element_text(size = 8))
+
+ggplot(
+  data = shootings2,
+  aes(numOff)
+  ) + 
+  geom_bar(color = "white") +
+  ggtitle("Bar plot of Number of Officers") +
+  scale_x_continuous(breaks = seq(0, 7, by= 1)) +
+  theme(plot.title = element_text(size = 8))
+```
